@@ -1,0 +1,17 @@
+{
+	"eslintIntegration": true,
+	"tabWidth": 4,
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "es5",
+	"printWidth": 120,
+	"overrides": [
+		{
+			"files": ["package.json"],
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false
+			}
+		}
+	]
+}

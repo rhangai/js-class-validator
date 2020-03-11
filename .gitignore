@@ -1,0 +1,10 @@
+# Temp files
+*~
+.~*
+~*
+.\#*
+\#*
+*.log
+
+# Módulos
+node_modules
