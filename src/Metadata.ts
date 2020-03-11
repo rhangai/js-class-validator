@@ -1,33 +1,75 @@
-type ValidatorFunction<T = any> = (prop: T) => boolean | Promise<boolean>;
+import { ClassValidator, Validator } from './ClassValidator';
+import { Prototype, Class } from './Util';
 
-const VALIDATOR_SYMBOL = Symbol('validator');
+class ValidatorMetadataStorage<T> {
+	private storageKey: symbol;
+	private storage: Record<symbol, T> = {};
 
-class ValidatorMetadataType {
-	private validators: Record<string, ValidatorFunction[]> = {};
+	constructor(storageKey?: symbol) {
+		if (!storageKey) storageKey = Symbol('storage-key');
+		this.storageKey = storageKey;
+	}
+
+	get(prop: symbol | any): T | undefined {
+		const key = this.getKey(prop, false);
+		if (!key) return;
+		// @ts-ignore
+		return this.storage[key];
+	}
+
+	set(prop: symbol | any, value: T): void {
+		const key = this.getKey(prop, true);
+		// @ts-ignore
+		this.storage[key] = value;
+	}
+
+	assert(prop: symbol | any, newValue: () => T): T {
+		const key = this.getKey(prop, true);
+
+		// @ts-ignore
+		let value = this.storage[key];
+		if (value == null) {
+			value = newValue();
+			// @ts-ignore
+			this.storage[key] = value;
+		}
+		return value;
+	}
+
+	private getKey(prop: symbol | any, create: boolean): symbol | undefined {
+		if (typeof prop === 'symbol') {
+			return prop;
+		}
+		const target = prop;
+		let key: symbol = Reflect.getMetadata(this.storageKey, target);
+		if (!key && create) {
+			key = Symbol();
+			Reflect.defineMetadata(this.storageKey, key, target);
+		}
+		return key;
+	}
 }
-
 /**
  *
  */
 class ValidatorMetadata {
-	private types: Record<string, ValidatorMetadataType> = {};
-	add(prototype: any, key: string, validator: ValidatorFunction<any>) {
-		const proto = Reflect.getMetadata('design:type', prototype);
-		console.log(proto);
-		const type = Reflect.getMetadata('design:type', prototype.constructor);
-		console.log(type);
+	private storage = new ValidatorMetadataStorage<ClassValidator>(Symbol('validator'));
+
+	add<T = any>(target: Class<T>, key: string, validator?: Validator) {
+		const classValidator = this.storage.assert(target, () => new ClassValidator());
+		if (validator) classValidator.add(key, validator);
+	}
+
+	addClassValidator<T = any>(target: Class<T>, validator: Validator) {
+		const classValidator = this.storage.assert(target, () => new ClassValidator());
+		classValidator.addClassValidator(validator);
+	}
+
+	async apply<T>(obj: Prototype<T>): Promise<T> {
+		const classValidator = this.storage.get(obj.constructor);
+		if (!classValidator) return obj;
+		return await classValidator.apply(obj);
 	}
 }
 
 export const validatorMetadata = new ValidatorMetadata();
-
-export function ValidateClass() {
-	return function<Target extends any = any>(target: Target) {
-		// metadataAssertValidator(target.prototype);
-	};
-}
-export function ValidateProp<PropType = any>(validator: ValidatorFunction<PropType>) {
-	return function<Target extends any = any>(prototype: Target, name: string, descriptor?: any) {
-		validatorMetadata.add(prototype, name, validator);
-	};
-}
