@@ -5,6 +5,6 @@
 		"strict": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
-		"types": ["reflect-metadata"]
+		"types": ["reflect-metadata", "@types/jest"]
 	}
 }
