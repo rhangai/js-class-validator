@@ -73,10 +73,10 @@ class ValidatorMetadata {
 	}
 
 	/// Apply the validation using the metadata
-	async apply<T>(classType: Class<T>, obj: any): Promise<T> {
+	async validate<T>(classType: Class<T>, obj: any): Promise<T> {
 		const classValidator = this.storage.get(classType);
 		if (!classValidator) return obj;
-		return await classValidator.apply(obj);
+		return await classValidator.validate(obj);
 	}
 }
 

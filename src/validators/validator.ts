@@ -6,4 +6,4 @@ export const Contains = (seed: string) => Validate({ test: v => validator.contai
 export const Equals = (comparision: string) => Validate({ test: v => validator.equals(v, comparision) });
 export const IsAfter = (date?: Date) => Validate({ test: v => validator.isAfter(v, date) });
 export const IsNumeric = () => Validate({ test: validator.isNumeric });
-export const IsString = () => Validate({ test: v => typeof v === 'string' });
+export const IsString = () => Validate({ test: v => typeof v === 'string', message: 'Expected string' });

@@ -7,5 +7,5 @@ import { Class } from './Util';
  * @param objOrInstance The object or instance to validate
  */
 export function validate<T = any>(classType: Class<T>, objOrInstance: T | object): Promise<T> {
-	return validatorMetadata.apply(classType, objOrInstance);
+	return validatorMetadata.validate(classType, objOrInstance);
 }

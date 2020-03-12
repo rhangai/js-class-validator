@@ -1,16 +1,18 @@
 import { Class } from './Util';
-import { ValidateError, ValidatePropError } from './Error';
+import { ValidateError, ValidatePropError, ValidateErrorItem } from './Error';
 
 export type ValidatorContext<Value = any> = {
 	object: any;
 	originalValue: Value;
 	key: string;
-	createError: () => Error;
+	createError: (message?: string) => Error;
 };
 
 export type Validator = {
 	/// Test whether this property is valid or not
 	test?: (value: any, context: ValidatorContext) => boolean | Promise<boolean>;
+	/// Message when there is an error
+	message?: string;
 	/// If skips returns true, the validation will be skipped
 	skip?: (value: any, context: ValidatorContext) => ValidatorSkipResult | Promise<ValidatorSkipResult>;
 	/// Transform the property
@@ -78,8 +80,8 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	 * Applies the validations
 	 * @param obj
 	 */
-	async apply(obj: T): Promise<T> {
-		const errors = [];
+	async validate(obj: T): Promise<T> {
+		const errors: ValidateErrorItem[] = [];
 		const output: any = {};
 		if (typeof obj !== 'object' || obj == null) {
 			throw new Error(`obj must be an object`);
@@ -87,14 +89,14 @@ export class ClassValidator<T extends Record<string, any> = any> {
 		for (const key in this.validators) {
 			const entry: ValidatorEntry | undefined = this.validators[key];
 			try {
-				const value = await this.applyEntry({
+				const value = await this.validateEntry({
 					entry,
 					context: {
 						object: obj,
 						originalValue: obj[key],
 						key,
-						createError() {
-							return new ValidatePropError(key);
+						createError(message?: string) {
+							return new ValidatePropError(key, message);
 						},
 					},
 				});
@@ -105,7 +107,7 @@ export class ClassValidator<T extends Record<string, any> = any> {
 				errors.push({ key, error });
 			}
 		}
-		if (errors.length > 0) throw new ValidateError(errors);
+		if (errors.length > 0) throw new ValidateError(`Error validating object`, errors);
 		Object.setPrototypeOf(output, this.classType.prototype);
 		return output;
 	}
@@ -114,42 +116,54 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	 * Applies the validation on a single entry
 	 * @param options
 	 */
-	private async applyEntry<Value>(options: ValidatorEntryApplyOptions<Value>): Promise<Value | undefined> {
+	private async validateEntry<Value>(options: ValidatorEntryApplyOptions<Value>): Promise<Value | undefined> {
 		const state: ValidatorEntryState<Value> = {
 			value: options.context.originalValue,
 			skip: false,
 		};
 		if (!options.entry || !options.entry.skipClassValidator) {
-			await this.applyChain(state, this.classValidators, options);
+			await ClassValidator.validateState(state, this.classValidators, options.context);
 		}
 		if (options.entry) {
-			await this.applyChain(state, options.entry.validators, options);
+			await ClassValidator.validateState(state, options.entry.validators, options.context);
 		}
 		return state.value;
 	}
-
+	/**
+	 * Validate a single item of a larger object using an stadalone validator
+	 */
+	static async validateItem<Value>(obj: any, key: string, value: Value, validators: Validator[]) {
+		const state: ValidatorEntryState<Value> = {
+			value,
+			skip: false,
+		};
+		await ClassValidator.validateState(state, validators, {
+			object: obj,
+			originalValue: value,
+			key,
+			createError: (message?: string) => new ValidatePropError(key, message),
+		});
+		return state.value;
+	}
 	/**
 	 * Apply a chain of validators
-	 * @param value
-	 * @param validators
-	 * @param options
 	 */
-	private async applyChain<Value>(
+	private static async validateState<Value>(
 		state: ValidatorEntryState<Value>,
 		validators: Validator[],
-		options: ValidatorEntryApplyOptions<Value>
+		context: ValidatorContext<Value>
 	) {
 		for (const validator of validators) {
 			if (state.skip) return;
 			if (validator.transform) {
-				state.value = (await validator.transform(state.value, options.context)) as any;
+				state.value = (await validator.transform(state.value, context)) as any;
 			}
 			if (validator.test) {
-				const isValid = await validator.test(state.value, options.context);
-				if (!isValid) throw options.context.createError();
+				const isValid = await validator.test(state.value, context);
+				if (!isValid) throw context.createError(validator.message);
 			}
 			if (validator.skip) {
-				const skipResult = await validator.skip(state.value, options.context);
+				const skipResult = await validator.skip(state.value, context);
 				if (skipResult === true) {
 					state.skip = true;
 					state.value = void 0;
