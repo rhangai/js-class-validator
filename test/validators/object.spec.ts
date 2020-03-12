@@ -10,7 +10,7 @@ describe('validator', () => {
 			class TestClass {}
 
 			await testValidator({
-				decorator: IsObject,
+				validator: IsObject(),
 				valids: [{}, [], new TestClass()],
 				invalids: [null, '', 'string', 10, undefined],
 			});
@@ -23,7 +23,7 @@ describe('validator', () => {
 			}
 
 			await testValidator({
-				decorator: () => IsObject(_ => TestClass),
+				validator: IsObject(_ => TestClass),
 				transforms: [
 					{
 						value: { name: '   john' },
@@ -56,7 +56,7 @@ describe('validator', () => {
 			}
 
 			await testValidator({
-				decorator: () => IsObject(_ => User),
+				validator: IsObject(_ => User),
 				invalids: [
 					// Invalid objects
 					{ type: 'user', data: { adminField: '   john' } },
@@ -86,7 +86,7 @@ describe('validator', () => {
 	describe('#IsArray', () => {
 		it('simple', async () => {
 			await testValidator({
-				decorator: () => IsArray([IsString()]),
+				validator: IsArray([IsString()]),
 				valids: [[], ['1', '2', '3']],
 				invalids: [null, '', 'string', 10, undefined, [1, 2, 3]],
 			});
@@ -99,7 +99,7 @@ describe('validator', () => {
 			}
 
 			await testValidator({
-				decorator: () => IsArrayOf(() => TestClass),
+				validator: IsArrayOf(() => TestClass),
 				valids: [[], [{ name: 'john' }, { name: 'doe' }, { name: 'mary' }]],
 				invalids: [null, '', 'string', 10, undefined, [1, 2, 3], [{ notName: 'john' }]],
 			});
@@ -114,7 +114,7 @@ describe('validator', () => {
 			}
 
 			await testValidator({
-				decorator: () => IsObject(_ => TestClass),
+				validator: IsObject(_ => TestClass),
 				valids: [{ age: '10' }, { age: '20' }, { age: '30' }],
 				invalids: [null, '', 'string', 10, undefined, [1, 2, 3], { notAge: 'john' }, { age: 'john' }],
 			});

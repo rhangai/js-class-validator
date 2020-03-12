@@ -42,6 +42,18 @@ export function normalizeValidator<T = any>(validator?: ValidatorItem | Validato
 	}
 	return extractValidator(validator);
 }
+/**
+ * Validate a property
+ * @param validator
+ */
+export function normalizeValidatorArray(validator?: ValidatorItem | ValidatorItem[]): Validator[] {
+	if (!validator) return [];
+	if (Array.isArray(validator)) {
+		return validator.map(extractValidator).filter(Boolean);
+	}
+	const v = extractValidator(validator);
+	return v ? [v] : [];
+}
 
 function isClassValidator<T>(prototypeOrClass: Prototype<T> | Class<T>, name?: string): prototypeOrClass is Class<T> {
 	if (name == null) {

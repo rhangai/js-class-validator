@@ -1,4 +1,4 @@
-import { Validate, ValidateDecorator, normalizeValidator } from '../Decorators';
+import { Validate, ValidateDecorator, normalizeValidator, normalizeValidatorArray } from '../Decorators';
 import { validatorMetadata } from '../Metadata';
 import { SYMBOL_VALIDATOR_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
@@ -28,7 +28,7 @@ export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>) {
  * Validate an array
  */
 export function IsArray<T = any>(validators?: Array<ValidateDecorator | Validator>) {
-	const arrayValidator = normalizeValidator(validators);
+	const arrayValidator = normalizeValidatorArray(validators);
 	return Validate({
 		transform: async (value, context) => {
 			if (!Array.isArray(value)) throw context.createError(`Must be an array`);
@@ -37,7 +37,7 @@ export function IsArray<T = any>(validators?: Array<ValidateDecorator | Validato
 			const errors: ValidateErrorItem[] = [];
 			for (let i = 0; i < value.length; ++i) {
 				try {
-					result[i] = await ClassValidator.validateItem(value, `${i}`, value[i], [arrayValidator]);
+					result[i] = await ClassValidator.validateItem(value, `${i}`, value[i], arrayValidator);
 				} catch (error) {
 					errors.push({ key: `${i}`, error });
 				}

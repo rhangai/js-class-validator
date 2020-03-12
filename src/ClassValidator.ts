@@ -4,7 +4,7 @@ import { ValidateError, ValidatePropError, ValidateErrorItem } from './Error';
 export type ValidatorContext<Value = any> = {
 	object: any;
 	originalValue: Value;
-	key: string;
+	key: string | null;
 	createError: (message?: string) => Error;
 };
 
@@ -132,7 +132,12 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	/**
 	 * Validate a single item of a larger object using an stadalone validator
 	 */
-	static async validateItem<Value>(obj: any, key: string, value: Value, validators: Array<Validator | undefined>) {
+	static async validateItem<Value>(
+		obj: any,
+		key: string | null,
+		value: Value,
+		validators: Array<Validator | undefined>
+	) {
 		const state: ValidatorEntryState<Value> = {
 			value,
 			skip: false,
@@ -141,7 +146,9 @@ export class ClassValidator<T extends Record<string, any> = any> {
 			object: obj,
 			originalValue: value,
 			key,
-			createError: (message?: string) => new ValidatePropError(key, message),
+			createError: (message?: string) => {
+				return key ? new ValidatePropError(key, message) : new ValidateError(message ?? 'Error', []);
+			},
 		});
 		return state.value;
 	}

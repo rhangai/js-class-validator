@@ -4,7 +4,7 @@ import { testValidator } from './util';
 describe('validator', () => {
 	it('#trim', async () => {
 		await testValidator({
-			decorator: Trim,
+			validator: Trim(),
 			valids: [null, 100, {}],
 			transforms: [{ value: '    rhangai', expected: 'rhangai' }],
 		});

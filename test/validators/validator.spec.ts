@@ -4,7 +4,7 @@ import { testValidator } from './util';
 describe('validators', () => {
 	it('#IsNumeric', async () => {
 		await testValidator({
-			decorator: IsNumeric,
+			validator: IsNumeric(),
 			valids: ['1', '100', '222'],
 		});
 	});

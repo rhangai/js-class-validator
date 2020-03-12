@@ -1,5 +1,5 @@
 import { Validate } from '../src/Decorators';
-import { validate, IsString, IsNumeric } from '../src';
+import { validate, IsString, IsNumeric, validateValue } from '../src';
 
 describe('validator', () => {
 	it('should create instances of class from raw object', async () => {
@@ -16,6 +16,10 @@ describe('validator', () => {
 		expect(validated).toBeInstanceOf(TestDto);
 		expect(validated).toHaveProperty('name', 'rhangai');
 		expect((validated as any).unknownProp).toBeUndefined();
+	});
+	it('should validate values', async () => {
+		const validated = await validateValue('value', IsString());
+		expect(validated).toBe('value');
 	});
 
 	it('should validate prop', async () => {

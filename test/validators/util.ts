@@ -1,5 +1,5 @@
 import { ValidateError } from '../../src/Error';
-import { validate } from '../../src';
+import { validate, validateValue } from '../../src';
 
 type TestValidatorSpecTransform = {
 	value: any;
@@ -9,44 +9,35 @@ type TestValidatorSpecTransform = {
 };
 
 type TestValidatorSpec = {
-	decorator: any;
+	validator: any;
 	valids?: any[];
 	invalids?: any[];
 	transforms?: TestValidatorSpecTransform[];
 };
 
 export async function testValidator(spec: TestValidatorSpec) {
-	class TestDto {
-		@spec.decorator()
-		value: any;
-	}
-
+	const validator = spec.validator;
 	// Test for valid values
 	const specValids = spec.valids ?? [];
 	for (const validValue of specValids) {
-		const dto = { value: validValue };
-		const validated = await validate(TestDto, dto);
-		expect(validated).toBeInstanceOf(TestDto);
+		await validateValue(validValue, validator);
 	}
 
 	// Test for invalid values
 	const specInvalids = spec.invalids ?? [];
 	for (const invalidValue of specInvalids) {
-		const dto = { value: invalidValue };
-		await expect(validate(TestDto, dto)).rejects.toBeInstanceOf(ValidateError);
+		await expect(validateValue(invalidValue, validator)).rejects.toBeInstanceOf(Error);
 	}
 
 	// Must pass transformations
 	const specTransforms = spec.transforms ?? [];
 	for (const specTransform of specTransforms) {
-		const dto = { value: specTransform.value };
-		const validated = await validate(TestDto, dto);
-		expect(validated).toBeInstanceOf(TestDto);
+		const validated = await validateValue(specTransform.value, validator);
 		if (specTransform.matchObject) {
-			expect(validated.value).toMatchObject(specTransform.expected);
+			expect(validated).toMatchObject(specTransform.expected);
 		} else {
-			expect(validated.value).toBe(specTransform.expected);
+			expect(validated).toBe(specTransform.expected);
 		}
-		if (specTransform.test) await specTransform.test(validated.value);
+		if (specTransform.test) await specTransform.test(validated);
 	}
 }
