@@ -1,6 +1,6 @@
 import { Validate, ValidateDecorator } from '../Decorators';
 import { validatorMetadata } from '../Metadata';
-import { SYMBOL_VALIDATOR_DECORATOR } from '../Util';
+import { SYMBOL_VALIDATOR_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
 import { ValidateError, ValidateErrorItem } from '../Error';
 
@@ -8,7 +8,7 @@ import { ValidateError, ValidateErrorItem } from '../Error';
  * Validates an object
  * @param cb If provided, the callback
  */
-export function IsObject<T = any>(cb?: (obj: T) => any) {
+export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>) {
 	return Validate({
 		transform: (value, context) => {
 			if (cb == null) {
@@ -25,15 +25,13 @@ export function IsObject<T = any>(cb?: (obj: T) => any) {
 	});
 }
 /**
- * Validates an object
- * @param cb If provided, the callback
+ * Validate an array
  */
-export type IsArrayOptionsItem = ValidateDecorator | Validator;
-
-export function IsArray<T = any>(validators: IsArrayOptionsItem[]) {
+export function IsArray<T = any>(validators?: Array<ValidateDecorator | Validator>) {
 	return Validate({
 		transform: async (value, context) => {
 			if (!Array.isArray(value)) throw context.createError(`Must be an array`);
+			if (!validators) return value;
 			const validatorsNormalized: Validator[] = validators.map(v => {
 				if (SYMBOL_VALIDATOR_DECORATOR in v) {
 					// @ts-ignore
@@ -55,4 +53,8 @@ export function IsArray<T = any>(validators: IsArrayOptionsItem[]) {
 			return result;
 		},
 	});
+}
+
+export function IsArrayOf<T = any>(cb?: (obj: T) => false | null | Class<T>) {
+	return IsArray([IsObject(cb)]);
 }

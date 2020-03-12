@@ -1,6 +1,6 @@
 import { Trim } from '../../src/validators/sanitizer';
 import { testValidator } from './util';
-import { IsObject, IsArray } from '../../src/validators/object';
+import { IsObject, IsArray, IsArrayOf } from '../../src/validators/object';
 import { Validate } from '../../src';
 import { IsString } from '../../src/validators/validator';
 
@@ -89,6 +89,19 @@ describe('validator', () => {
 				decorator: () => IsArray([IsString()]),
 				valids: [[], ['1', '2', '3']],
 				invalids: [null, '', 'string', 10, undefined, [1, 2, 3]],
+			});
+		});
+
+		it('array of objects', async () => {
+			class TestClass {
+				@IsString()
+				name!: string;
+			}
+
+			await testValidator({
+				decorator: () => IsArrayOf(() => TestClass),
+				valids: [[], [{ name: 'john' }, { name: 'doe' }, { name: 'mary' }]],
+				invalids: [null, '', 'string', 10, undefined, [1, 2, 3], [{ notName: 'john' }]],
 			});
 		});
 	});
