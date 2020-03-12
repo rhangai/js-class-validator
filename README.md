@@ -32,4 +32,5 @@ const user = await validate(UserDto, obj);
 
 ## Validators
 
--   IsObject(\_ => )
+-   `IsObject()` Check if the property is an object
+-   `IsObject(() => Type)` Check if the property is validated against a given type

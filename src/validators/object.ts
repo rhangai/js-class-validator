@@ -2,8 +2,8 @@ import { Validate } from '../Decorators';
 import { validatorMetadata } from '../Metadata';
 
 /**
- * Validates a nested object
- * @param cb
+ * Validates an object
+ * @param cb If provided, the callback
  */
 export function IsObject<T = any>(cb?: (obj: T) => any) {
 	return Validate({

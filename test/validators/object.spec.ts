@@ -55,7 +55,16 @@ describe('validator', () => {
 
 		await testValidator({
 			decorator: () => IsObject(_ => User),
-			invalids: [{ type: 'user', data: { adminField: '   john' } }, null, ''],
+			invalids: [
+				// Invalid objects
+				{ type: 'user', data: { adminField: '   john' } },
+				{ type: 'admin', data: { notAdminField: '   john' } },
+				{ type: 'admin', data: null },
+				null,
+				'',
+				false,
+				true,
+			],
 			transforms: [
 				{
 					value: { type: 'admin', data: { adminField: '   john' } },
