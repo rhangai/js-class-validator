@@ -38,6 +38,7 @@ const user = await validate(UserDto, obj);
 -   `Trim(chars?)` Trim the stirng. This does _not_ ensure the property is a string.
 -   `IsNumeric()` Check if the prop is a numeric value
 -   `IsString()` Check if the prop is a string
+-   `IsLength({ min?, max? })` Check if the object has length
 
 ## Creating validators
 
