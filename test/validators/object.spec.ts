@@ -2,6 +2,7 @@ import { Trim } from '../../src/validators/sanitizer';
 import { testValidator } from './util';
 import { IsObject } from '../../src/validators/object';
 import { Validate } from '../../src';
+import { IsString } from '../../src/validators/validator';
 
 describe('validator', () => {
 	it('#IsObject (pure)', async () => {
@@ -35,11 +36,13 @@ describe('validator', () => {
 	it('#IsObject (advanced)', async () => {
 		class AdminData {
 			@Trim()
+			@IsString()
 			adminField!: string;
 		}
 
 		class UserData {
 			@Trim()
+			@IsString()
 			userField!: string;
 		}
 

@@ -5,6 +5,7 @@ describe('validator', () => {
 	it('#trim', async () => {
 		await testValidator({
 			decorator: Trim,
+			valids: [null, 100, {}],
 			transforms: [{ value: '    rhangai', expected: 'rhangai' }],
 		});
 	});

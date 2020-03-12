@@ -81,6 +81,9 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	async apply(obj: T): Promise<T> {
 		const errors = [];
 		const output: any = {};
+		if (typeof obj !== 'object' || obj == null) {
+			throw new Error(`obj must be an object`);
+		}
 		for (const key in this.validators) {
 			const entry: ValidatorEntry | undefined = this.validators[key];
 			try {

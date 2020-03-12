@@ -9,10 +9,10 @@ export function IsObject<T = any>(cb?: (obj: T) => any) {
 	return Validate({
 		transform: (value, context) => {
 			if (cb == null) {
-				if (typeof value === 'object' && value != null) {
-					return value;
+				if (typeof value !== 'object' || value == null) {
+					throw context.createError();
 				}
-				throw context.createError();
+				return value;
 			}
 			const classType = cb(context.object);
 			if (classType === false) throw context.createError();
