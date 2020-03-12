@@ -1,6 +1,9 @@
 import { ClassValidator, Validator } from './ClassValidator';
 import { Prototype, Class } from './Util';
 
+/**
+ * Storage for validators
+ */
 class ValidatorMetadataStorage<T> {
 	private storageKey: symbol;
 	private storage: Record<symbol, T> = {};
@@ -23,6 +26,7 @@ class ValidatorMetadataStorage<T> {
 		this.storage[key] = value;
 	}
 
+	/// Assert a new validator
 	assert(prop: symbol | any, newValue: () => T): T {
 		const key = this.getKey(prop, true);
 
@@ -36,6 +40,7 @@ class ValidatorMetadataStorage<T> {
 		return value;
 	}
 
+	/// Get a new validator from key
 	private getKey(prop: symbol | any, create: boolean): symbol | undefined {
 		if (typeof prop === 'symbol') {
 			return prop;
@@ -50,23 +55,26 @@ class ValidatorMetadataStorage<T> {
 	}
 }
 /**
- *
+ * Generate the validations metadata
  */
 class ValidatorMetadata {
 	private storage = new ValidatorMetadataStorage<ClassValidator>(Symbol('validator'));
 
+	/// Add a validator to the prop
 	add<T = any>(target: Class<T>, key: string, validator?: Validator) {
-		const classValidator = this.storage.assert(target, () => new ClassValidator());
-		if (validator) classValidator.add(key, validator);
+		const classValidator = this.storage.assert(target, () => new ClassValidator(target));
+		classValidator.add(key, validator);
 	}
 
-	addClassValidator<T = any>(target: Class<T>, validator: Validator) {
-		const classValidator = this.storage.assert(target, () => new ClassValidator());
+	/// Add a class validator to the target
+	addClassValidator<T = any>(target: Class<T>, validator?: Validator) {
+		const classValidator = this.storage.assert(target, () => new ClassValidator(target));
 		classValidator.addClassValidator(validator);
 	}
 
-	async apply<T>(obj: Prototype<T>): Promise<T> {
-		const classValidator = this.storage.get(obj.constructor);
+	/// Apply the validation using the metadata
+	async apply<T>(classType: Class<T>, obj: any): Promise<T> {
+		const classValidator = this.storage.get(classType);
 		if (!classValidator) return obj;
 		return await classValidator.apply(obj);
 	}

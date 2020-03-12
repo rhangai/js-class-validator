@@ -1,27 +1,25 @@
 import { validatorMetadata } from './Metadata';
 import { Prototype, Class } from './Util';
 import { Validator } from './ClassValidator';
-import { Expose, Type } from 'class-transformer';
 
-export function ValidateClass(validator: Validator) {
-	return function(target: Class<any>) {
-		validatorMetadata.addClassValidator(target, validator);
+/**
+ * Validate a property
+ * @param validator
+ */
+export function Validate<T = any>(validator?: Validator) {
+	return function(prototypeOrClass: Prototype<T> | Class<T>, name?: string) {
+		if (isClassValidator(prototypeOrClass, name)) {
+			validatorMetadata.addClassValidator(prototypeOrClass, validator);
+		} else {
+			validatorMetadata.add(prototypeOrClass.constructor, name!, validator);
+		}
 	};
 }
 
-export function ValidateProp<T = any>(validator?: Validator) {
-	return function(prototype: Prototype<T>, name: string) {
-		validatorMetadata.add(prototype.constructor, name, validator);
-		return Expose()(prototype, name);
-	};
-}
-
-export function ValidateNested<T = any>(cb: (obj: T) => any) {
-	const typeDecorator = Type(({ object }: any) => cb(object));
-	return function(prototype: Prototype<T>, name: string) {
-		validatorMetadata.add(prototype.constructor, name, {
-			transform: value => validatorMetadata.apply(value),
-		});
-		return typeDecorator(prototype, name);
-	};
+function isClassValidator<T>(prototypeOrClass: Prototype<T> | Class<T>, name?: string): prototypeOrClass is Class<T> {
+	if (name == null) {
+		if (typeof prototypeOrClass !== 'function') throw new Error(`@Validate must be applied to a class or a prop`);
+		return true;
+	}
+	return false;
 }

@@ -5,6 +5,8 @@
 		"strict": true,
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
+		"rootDir": "src",
 		"types": ["reflect-metadata", "@types/jest"]
-	}
+	},
+	"include": ["src"]
 }

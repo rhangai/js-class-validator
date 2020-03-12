@@ -9,3 +9,4 @@
 # Módulos
 node_modules
 /coverage
+/lib

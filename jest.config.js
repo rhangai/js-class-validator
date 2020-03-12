@@ -12,5 +12,5 @@ module.exports = {
 	setupFiles: ['./test/setup.ts'],
 	collectCoverage: true,
 	collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
-	testMatch: ['<rootDir>/test/**/*.test.ts'],
+	testMatch: ['<rootDir>/test/**/*.(spec|test).ts'],
 };
