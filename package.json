@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/class-validator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Class Validator",
   "main": "lib/index.js",
   "license": "MIT",
