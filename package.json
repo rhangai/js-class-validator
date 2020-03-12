@@ -6,8 +6,11 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^25.1.4",
     "class-transformer": "^0.2.3",
+    "jest": "^25.1.0",
     "reflect-metadata": "^0.1.13",
+    "ts-jest": "^25.2.1",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.3",
     "validator": "^12.2.0"
@@ -16,5 +19,8 @@
     "class-transformer": "^0.2.3",
     "reflect-metadata": "^0.1.13",
     "validator": "^12.2.0"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }
