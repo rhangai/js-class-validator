@@ -132,7 +132,7 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	/**
 	 * Validate a single item of a larger object using an stadalone validator
 	 */
-	static async validateItem<Value>(obj: any, key: string, value: Value, validators: Validator[]) {
+	static async validateItem<Value>(obj: any, key: string, value: Value, validators: Array<Validator | undefined>) {
 		const state: ValidatorEntryState<Value> = {
 			value,
 			skip: false,
@@ -150,10 +150,11 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	 */
 	private static async validateState<Value>(
 		state: ValidatorEntryState<Value>,
-		validators: Validator[],
+		validators: Array<Validator | undefined>,
 		context: ValidatorContext<Value>
 	) {
 		for (const validator of validators) {
+			if (!validator) continue;
 			if (state.skip) return;
 			if (validator.transform) {
 				state.value = (await validator.transform(state.value, context)) as any;

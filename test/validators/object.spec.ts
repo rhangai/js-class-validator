@@ -2,7 +2,7 @@ import { Trim } from '../../src/validators/sanitizer';
 import { testValidator } from './util';
 import { IsObject, IsArray, IsArrayOf } from '../../src/validators/object';
 import { Validate } from '../../src';
-import { IsString } from '../../src/validators/validator';
+import { IsString, IsNumeric } from '../../src/validators/validator';
 
 describe('validator', () => {
 	describe('#IsObject', () => {
@@ -102,6 +102,21 @@ describe('validator', () => {
 				decorator: () => IsArrayOf(() => TestClass),
 				valids: [[], [{ name: 'john' }, { name: 'doe' }, { name: 'mary' }]],
 				invalids: [null, '', 'string', 10, undefined, [1, 2, 3], [{ notName: 'john' }]],
+			});
+		});
+	});
+
+	describe('#Validate', () => {
+		it('validator as array', async () => {
+			class TestClass {
+				@Validate([IsString(), IsNumeric()])
+				age!: string;
+			}
+
+			await testValidator({
+				decorator: () => IsObject(_ => TestClass),
+				valids: [{ age: '10' }, { age: '20' }, { age: '30' }],
+				invalids: [null, '', 'string', 10, undefined, [1, 2, 3], { notAge: 'john' }, { age: 'john' }],
 			});
 		});
 	});

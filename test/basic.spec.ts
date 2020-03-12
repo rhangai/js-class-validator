@@ -1,5 +1,5 @@
 import { Validate } from '../src/Decorators';
-import { validate } from '../src';
+import { validate, IsString, IsNumeric } from '../src';
 
 describe('validator', () => {
 	it('should create instances of class from raw object', async () => {
@@ -22,10 +22,13 @@ describe('validator', () => {
 		class TestDto {
 			@Validate({ test: v => typeof v === 'string' })
 			name!: string;
+			@Validate([IsString(), IsNumeric()])
+			age!: string;
 		}
 
 		const dto = {
 			name: 'rhangai',
+			age: '10',
 		};
 		const validated = await validate(TestDto, dto);
 		expect(validated).toBeInstanceOf(TestDto);
