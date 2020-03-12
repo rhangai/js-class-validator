@@ -40,6 +40,13 @@ const user = await validate(UserDto, obj);
 -   `IsString()` Check if the prop is a string
 -   `IsLength({ min?, max? })` Check if the object has length
 
+## Sanitizers
+
+-   `Trim(chars?: string)`
+-   `NormalizeEmail(options: any)`
+-   `Blacklist(chars: string)`
+-   `Whitelist(chars: string)`
+
 ## Creating validators
 
 ```ts

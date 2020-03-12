@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
+    "fecha": "^4.2.0",
     "validator": "^12.2.0"
   },
   "devDependencies": {

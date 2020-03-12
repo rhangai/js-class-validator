@@ -1,11 +1,10 @@
-import { ValidateError } from '../../src/Error';
-import { validate, validateValue } from '../../src';
+import { validateValue } from '../../src';
 
 type TestValidatorSpecTransform = {
 	value: any;
-	expected: any;
+	expected?: any;
 	matchObject?: boolean;
-	test?: (value: any) => void | Promise<void>;
+	test?: (value: any, spec: TestValidatorSpecTransform) => void | Promise<void>;
 };
 
 type TestValidatorSpec = {
@@ -33,11 +32,13 @@ export async function testValidator(spec: TestValidatorSpec) {
 	const specTransforms = spec.transforms ?? [];
 	for (const specTransform of specTransforms) {
 		const validated = await validateValue(specTransform.value, validator);
-		if (specTransform.matchObject) {
+
+		if (specTransform.test) {
+			await specTransform.test(validated, specTransform);
+		} else if (specTransform.matchObject) {
 			expect(validated).toMatchObject(specTransform.expected);
 		} else {
 			expect(validated).toBe(specTransform.expected);
 		}
-		if (specTransform.test) await specTransform.test(validated);
 	}
 }
