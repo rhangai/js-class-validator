@@ -1,0 +1,6 @@
+*
+!/package.json
+!/yarn.lock
+!/CHANGELOG.md
+!/README.md
+!/lib/**/*
