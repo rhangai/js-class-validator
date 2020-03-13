@@ -9,6 +9,20 @@ describe('Validators', () => {
 		});
 	});
 
+	it('#IsString', async () => {
+		await testValidator({
+			validator: IsString(),
+			valids: ['1', '100', '222'],
+			invalids: [null, {}, undefined, '', true, false, []],
+		});
+
+		await testValidator({
+			validator: IsString({ empty: true }),
+			valids: ['1', '100', '222', ''],
+			invalids: [null, {}, undefined, true, false, []],
+		});
+	});
+
 	it('#IsEnum', async () => {
 		enum MY_ENUM {
 			MY_VALUE_1 = 'something',
