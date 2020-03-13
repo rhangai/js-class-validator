@@ -27,6 +27,7 @@
     "prebuild": "run-s clean",
     "build": "tsc -p tsconfig.build.json",
     "prepack": "run-s build",
+    "prerelease": "run-s test",
     "release": "standard-version"
   }
 }
