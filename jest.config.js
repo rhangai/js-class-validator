@@ -10,7 +10,6 @@ module.exports = {
 		'^.+\\.tsx?$': 'ts-jest',
 	},
 	setupFiles: ['./test/setup.ts'],
-	collectCoverage: true,
 	collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
 	testMatch: ['<rootDir>/test/**/*.(spec|test).ts'],
 };
