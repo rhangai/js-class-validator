@@ -1,5 +1,5 @@
 import { validatorMetadata } from './Metadata';
-import { Class } from './Util';
+import { Class, Validated } from './Util';
 import { ValidatorItem, normalizeValidatorArray } from './Decorators';
 import { ClassValidator } from './ClassValidator';
 
@@ -8,8 +8,8 @@ import { ClassValidator } from './ClassValidator';
  * @param classType The class type
  * @param objOrInstance The object or instance to validate
  */
-export function validate<T = any>(classType: Class<T>, objOrInstance: T | object): Promise<T> {
-	return validatorMetadata.validate(classType, objOrInstance);
+export function validate<T extends {}>(classType: Class<T>, objOrInstance: T | object): Promise<Validated<T>> {
+	return validatorMetadata.validate(classType, objOrInstance) as any;
 }
 
 /**
@@ -17,7 +17,10 @@ export function validate<T = any>(classType: Class<T>, objOrInstance: T | object
  * @param classType The class type
  * @param objOrInstance The object or instance to validate
  */
-export async function validateValue<T = any>(value: any, validator?: ValidatorItem | ValidatorItem[]): Promise<T> {
+export async function validateValue<T = any>(
+	value: any,
+	validator?: ValidatorItem | ValidatorItem[]
+): Promise<Validated<T>> {
 	const normalizedValidators = normalizeValidatorArray(validator);
 	return ClassValidator.validateItem(value, null, value, normalizedValidators);
 }
