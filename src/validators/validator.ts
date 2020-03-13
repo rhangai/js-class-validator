@@ -16,4 +16,3 @@ export const IsEmail = (options: unknown) => Validate({ test: v => validator.isE
 
 export const IsEnum = <T extends { [key: string]: string | number }>(testEnum: T) =>
 	Validate({ test: v => Object.values(testEnum).includes(v) });
-export const IsOptional = () => Validate({ skip: v => v == null });

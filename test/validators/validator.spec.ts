@@ -1,5 +1,5 @@
-import { IsNumeric, IsOptional, IsString, IsEnum } from '../../src/validators/validator';
-import { testValidator } from './util';
+import { IsNumeric, IsString, IsEnum } from '../../src/validators/validator';
+import { testValidator } from './lib';
 
 describe('Validators', () => {
 	it('#IsNumeric', async () => {
@@ -20,14 +20,6 @@ describe('Validators', () => {
 			validator: [IsEnum(MY_ENUM)],
 			valids: [3, 'something', 'other'],
 			invalids: [1, 2, '3', null, {}],
-		});
-	});
-
-	it('#IsOptional', async () => {
-		await testValidator({
-			validator: [IsOptional(), IsString()],
-			valids: ['1', '100', null, undefined, '222'],
-			invalids: [100, {}, []],
 		});
 	});
 });

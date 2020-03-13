@@ -1,7 +1,7 @@
 import { Trim, ToDate } from '../../src/validators/sanitizer';
-import { testValidator } from './util';
+import { testValidator } from './lib';
 
-describe('validator', () => {
+describe('Sanitizers', () => {
 	it('#trim', async () => {
 		await testValidator({
 			validator: Trim(),

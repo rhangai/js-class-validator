@@ -1,10 +1,10 @@
 import { Trim } from '../../src/validators/sanitizer';
-import { testValidator } from './util';
+import { testValidator } from './lib';
 import { IsObject, IsArray, IsArrayOf } from '../../src/validators/object';
 import { Validate } from '../../src';
 import { IsString, IsNumeric } from '../../src/validators/validator';
 
-describe('validator', () => {
+describe('Objects', () => {
 	describe('#IsObject', () => {
 		it('pure', async () => {
 			class TestClass {}
