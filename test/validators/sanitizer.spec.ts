@@ -1,4 +1,4 @@
-import { Trim, ToDate } from '../../src/validators/sanitizer';
+import { Trim, ToDate, ToInt } from '../../src/validators/sanitizer';
 import { testValidator } from './lib';
 
 describe('Sanitizers', () => {
@@ -32,6 +32,18 @@ describe('Sanitizers', () => {
 						expect(value.getFullYear()).toBe(2222);
 					},
 				},
+			],
+		});
+	});
+
+	it('#ToInt', async () => {
+		await testValidator({
+			validator: ToInt(),
+			invalids: [null, undefined, {}, '-x', [], '-1.20', 3.14],
+			transforms: [
+				{ value: '1', expected: 1 },
+				{ value: 2, expected: 2 },
+				{ value: '-1000', expected: -1000 },
 			],
 		});
 	});
