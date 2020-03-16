@@ -6,6 +6,6 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"rootDir": "src",
-		"types": ["reflect-metadata", "@types/jest"]
+		"types": ["reflect-metadata", "@types/jest", "@types/node"]
 	}
 }
