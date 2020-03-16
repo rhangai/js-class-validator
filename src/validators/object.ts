@@ -36,10 +36,11 @@ export function IsArray<T = any>(validators?: Array<ValidateDecorator | Validato
 			const result = [];
 			const errors: ValidateErrorItem[] = [];
 			for (let i = 0; i < value.length; ++i) {
+				const originalValue = value[i];
 				try {
 					result[i] = await ClassValidator.validateItem(value, `${i}`, value[i], arrayValidator);
 				} catch (error) {
-					errors.push({ key: `${i}`, error });
+					errors.push({ key: `${i}`, error, value: originalValue });
 				}
 			}
 			if (errors.length > 0) throw new ValidateError(`Error validating array`, errors);

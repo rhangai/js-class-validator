@@ -3,6 +3,10 @@ export type ValidateErrorItem = {
 	key?: string | null;
 	value?: any;
 };
+
+export type ValidateErrorBuildErrorMessageOptions = {
+	skipValue?: boolean;
+};
 /**
  *
  */
@@ -15,14 +19,18 @@ export class ValidateError extends Error {
 		this.errors = errors;
 	}
 
-	static buildErrorMessage(message: string, errors: ValidateErrorItem[]): string {
+	static buildErrorMessage(
+		message: string,
+		errors: ValidateErrorItem[],
+		options: ValidateErrorBuildErrorMessageOptions = {}
+	): string {
 		if (errors.length > 0) {
 			const errorMessages = errors.map(({ error, key, value }) => {
 				const message = error.message.split('\n');
 				for (let i = 1; i < message.length; ++i) {
 					message[i] = `  ${message[i]}`;
 				}
-				const valueMessage = `Passed ${JSON.stringify(value)}. `;
+				const valueMessage = options.skipValue ? '' : `Passed ${JSON.stringify(value)}. `;
 				if (key) return `- ${key}: ${valueMessage}${message.join('\n')}`;
 				return `- ${valueMessage}${message.join('\n')}`;
 			});

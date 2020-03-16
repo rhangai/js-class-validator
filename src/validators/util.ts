@@ -21,7 +21,9 @@ export const IsOneOf = (validators?: ValidatorItem | ValidatorItem[]) => {
 					errors.push({ key: null, error });
 				}
 			}
-			const message = ValidateError.buildErrorMessage('Must be OneOf', errors);
+			const message = ValidateError.buildErrorMessage(`Passed ${JSON.stringify(value)}. Must be OneOf`, errors, {
+				skipValue: true,
+			});
 			throw context.createError(message);
 		},
 	});
