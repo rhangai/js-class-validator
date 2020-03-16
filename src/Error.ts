@@ -1,6 +1,7 @@
 export type ValidateErrorItem = {
 	error: Error;
 	key?: string | null;
+	value?: any;
 };
 /**
  *
@@ -16,13 +17,14 @@ export class ValidateError extends Error {
 
 	static buildErrorMessage(message: string, errors: ValidateErrorItem[]): string {
 		if (errors.length > 0) {
-			const errorMessages = errors.map(({ error, key }) => {
+			const errorMessages = errors.map(({ error, key, value }) => {
 				const message = error.message.split('\n');
 				for (let i = 1; i < message.length; ++i) {
 					message[i] = `  ${message[i]}`;
 				}
-				if (key) return `- ${key}: ${message.join('\n')}`;
-				return `- ${message.join('\n')}`;
+				const valueMessage = `Passed ${JSON.stringify(value)}. `;
+				if (key) return `- ${key}: ${valueMessage}${message.join('\n')}`;
+				return `- ${valueMessage}${message.join('\n')}`;
 			});
 			message = `${message}\n  ${errorMessages.join('\n  ')}`;
 		}

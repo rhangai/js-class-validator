@@ -88,12 +88,13 @@ export class ClassValidator<T extends Record<string, any> = any> {
 		}
 		for (const key in this.validators) {
 			const entry: ValidatorEntry | undefined = this.validators[key];
+			const originalValue = obj[key];
 			try {
 				const value = await this.validateEntry({
 					entry,
 					context: {
 						object: obj,
-						originalValue: obj[key],
+						originalValue,
 						key,
 						createError(message?: string) {
 							return new ValidatePropError(key, message);
@@ -104,10 +105,10 @@ export class ClassValidator<T extends Record<string, any> = any> {
 					output[key] = value;
 				}
 			} catch (error) {
-				errors.push({ key, error });
+				errors.push({ key, error, value: originalValue });
 			}
 		}
-		if (errors.length > 0) throw new ValidateError(`Error validating object`, errors);
+		if (errors.length > 0) throw new ValidateError(`Error validating ${this.classType.name}`, errors);
 		Object.setPrototypeOf(output, this.classType.prototype);
 		return output;
 	}

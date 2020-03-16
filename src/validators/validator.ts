@@ -5,10 +5,10 @@ import validator from 'validator';
 export const Contains = (seed: string) => Validate({ test: v => validator.contains(v, seed) });
 export const IsEqual = (value: any) => Validate({ test: v => v === value });
 export const IsAfter = (date?: Date) => Validate({ test: v => validator.isAfter(v, date) });
-export const IsBoolean = () => Validate({ test: v => v === true || v === false, message: 'Expected boolean' });
-export const IsNumber = () => Validate({ test: v => typeof v === 'number', message: 'Expected number' });
+export const IsBoolean = () => Validate({ test: v => v === true || v === false, message: 'Expected Boolean' });
+export const IsNumber = () => Validate({ test: v => typeof v === 'number', message: 'Expected Number' });
 export const IsInt = () =>
-	Validate({ test: v => typeof v === 'number' && Number.isSafeInteger(v), message: 'Expected int' });
+	Validate({ test: v => typeof v === 'number' && Number.isSafeInteger(v), message: 'Expected Integer' });
 export const IsNumeric = () => Validate({ test: validator.isNumeric });
 export const IsDecimal = () => Validate({ test: validator.isDecimal });
 export const IsLength = (options: { min: number; max: number }) =>
