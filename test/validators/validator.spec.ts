@@ -1,4 +1,4 @@
-import { IsNumeric, IsString, IsEnum } from '../../src/validators/validator';
+import { IsNumeric, IsString, IsEnum, IsInt } from '../../src/validators/validator';
 import { testValidator } from './lib';
 
 describe('Validators', () => {
@@ -6,6 +6,14 @@ describe('Validators', () => {
 		await testValidator({
 			validator: IsNumeric(),
 			valids: ['1', '100', '222'],
+		});
+	});
+
+	it('#IsInt', async () => {
+		await testValidator({
+			validator: IsInt(),
+			valids: [1, 2, 3, 4, 0, -1, -800],
+			invalids: ['1', 1.2, 3.4, -1.22, -NaN, -Infinity, +Infinity, null, []],
 		});
 	});
 
