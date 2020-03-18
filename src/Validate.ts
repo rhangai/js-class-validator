@@ -15,7 +15,7 @@ export type ValidateOptions = {
  */
 export function validate<T extends {}>(
 	classType: Class<T>,
-	objOrInstance: T | object,
+	objOrInstance: Record<string, any>,
 	options: ValidateOptions = {}
 ): Promise<Validated<T>> {
 	return validatorMetadata.validate(classType, objOrInstance, {
