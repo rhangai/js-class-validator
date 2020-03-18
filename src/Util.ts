@@ -18,7 +18,7 @@ type DeepReadonlyObject<T> = {
 export type Validated<T> = DeepReadonlyObject<T>;
 
 interface ValidateInputObjectConversible<InputType> {
-	[VALIDATOR_SYMBOL_INPUT]: InputType;
+	[VALIDATOR_SYMBOL_INPUT]?: InputType;
 }
 
 // prettier-ignore
