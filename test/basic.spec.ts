@@ -1,5 +1,6 @@
 import { Validate } from '../src/Decorators';
-import { validate, IsString, IsNumeric, validateValue } from '../src';
+import { validate, IsString, IsNumeric, validateValue, ValidateInput, Trim } from '../src';
+import { SYMBOL_VALIDATOR_INPUT_TYPE } from '../src/Util';
 
 describe('validator', () => {
 	it('should create instances of class from raw object', async () => {
@@ -92,23 +93,31 @@ describe('validator', () => {
 	});
 
 	it('should validate options', async () => {
+		class CustomType {
+			[SYMBOL_VALIDATOR_INPUT_TYPE]: string | number;
+		}
 		class TestDto {
 			@Validate()
 			name!: string;
 
 			@Validate()
 			job!: string;
+
+			@Validate()
+			custom!: CustomType;
 		}
 
-		const dto = {
+		const dto: ValidateInput<TestDto> = {
 			name: '    rhangai     ',
 			job: '    programmer     ',
+			custom: 1000,
 		};
 		const validated = await validate(TestDto, dto, {
-			postValidators: Validate({ transform: v => v.trim() }),
+			postValidators: Trim(),
 		});
 		expect(validated).toBeInstanceOf(TestDto);
 		expect(validated).toHaveProperty('name', 'rhangai');
 		expect(validated).toHaveProperty('job', 'programmer');
+		expect(validated).toHaveProperty('custom', 1000);
 	});
 });
