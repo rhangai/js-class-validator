@@ -119,7 +119,7 @@ export class ClassValidator<T extends Record<string, any> = any> {
 		}
 		if (errors.length > 0) throw new ValidateError(`Error validating ${this.classType.name}`, errors);
 		Object.setPrototypeOf(output, this.classType.prototype);
-		return output;
+		return Object.freeze(output);
 	}
 
 	/**
