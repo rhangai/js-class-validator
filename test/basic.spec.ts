@@ -1,6 +1,6 @@
 import { Validate } from '../src/Decorators';
 import { validate, IsString, IsNumeric, validateValue, ValidateInput, Trim } from '../src';
-import { SYMBOL_VALIDATOR_INPUT_TYPE } from '../src/Util';
+import { VALIDATOR_SYMBOL_INPUT } from '../src/Util';
 
 describe('validator', () => {
 	it('should create instances of class from raw object', async () => {
@@ -94,7 +94,7 @@ describe('validator', () => {
 
 	it('should validate options', async () => {
 		class CustomType {
-			[SYMBOL_VALIDATOR_INPUT_TYPE]: string | number;
+			[VALIDATOR_SYMBOL_INPUT]: string | number;
 		}
 		class TestDto {
 			@Validate()
