@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/class-validator",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Validate classes using decorators",
   "main": "lib/index.js",
   "repository": "git@github.com:rhangai/node-class-validator.git",
