@@ -53,3 +53,24 @@ import { Validate } from '@rhangai/class-validator';
 
 export const IsPassword = Validate([IsString(), IsLength({ min: 6 })]);
 ```
+
+You can also use the validator interface to create a validator
+
+```ts
+interface Validator {
+	/// Test whether this property is valid or not
+	test?: (value: any, context: ValidatorContext) => boolean | Promise<boolean>;
+	/// Message when there is an error
+	message?: string;
+	/// If skips returns true, the validation will be skipped
+	skip?: (value: any, context: ValidatorContext) => ValidatorSkipResult | Promise<ValidatorSkipResult>;
+	/// Transform the property
+	transform?: (value: any, context: ValidatorContext) => unknown | Promise<unknown>;
+}
+
+const IsPassword = Validate({
+	test: input => {
+		return typeof input === 'string' && input.length >= 6;
+	},
+});
+```
