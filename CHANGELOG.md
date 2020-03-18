@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/rhangai/node-class-validator/compare/v0.0.9...v0.0.10) (2020-03-18)
+
+
+### Bug Fixes
+
+* Validate parameter object ([824d43d](https://github.com/rhangai/node-class-validator/commit/824d43dabca907ecb65b7b35486ffaa01af904aa))
+
 ### [0.0.9](https://github.com/rhangai/node-class-validator/compare/v0.0.8...v0.0.9) (2020-03-18)
 
 
