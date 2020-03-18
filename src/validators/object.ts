@@ -1,6 +1,6 @@
 import { Validate, ValidateDecorator, normalizeValidator, normalizeValidatorArray } from '../Decorators';
 import { validatorMetadata } from '../Metadata';
-import { SYMBOL_VALIDATOR_DECORATOR, Class } from '../Util';
+import { VALIDATOR_SYMBOL_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
 import { ValidateError, ValidateErrorItem } from '../Error';
 

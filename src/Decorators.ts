@@ -1,10 +1,10 @@
 import { validatorMetadata } from './Metadata';
-import { Prototype, Class, SYMBOL_VALIDATOR_DECORATOR } from './Util';
+import { Prototype, Class, VALIDATOR_SYMBOL_DECORATOR } from './Util';
 import { Validator, ClassValidator } from './ClassValidator';
 
 export type ValidateDecorator<T = any> = {
 	(prototypeOrClass: Prototype<T> | Class<T>, name?: string): void;
-	[SYMBOL_VALIDATOR_DECORATOR]?: Validator;
+	[VALIDATOR_SYMBOL_DECORATOR]?: Validator;
 };
 
 export type ValidatorItem = ValidateDecorator | Validator;
@@ -22,7 +22,7 @@ export function Validate<T = any>(validator?: ValidatorItem | ValidatorItem[]): 
 			validatorMetadata.add(prototypeOrClass.constructor, name!, validatorNormalized);
 		}
 	};
-	decorator[SYMBOL_VALIDATOR_DECORATOR] = validatorNormalized;
+	decorator[VALIDATOR_SYMBOL_DECORATOR] = validatorNormalized;
 	return decorator;
 }
 
@@ -68,9 +68,9 @@ function isClassValidator<T>(prototypeOrClass: Prototype<T> | Class<T>, name?: s
  * @param item The decorator or the validator
  */
 function extractValidator(item: ValidatorItem): Validator {
-	if (SYMBOL_VALIDATOR_DECORATOR in item) {
+	if (VALIDATOR_SYMBOL_DECORATOR in item) {
 		// @ts-ignore
-		return item[SYMBOL_VALIDATOR_DECORATOR];
+		return item[VALIDATOR_SYMBOL_DECORATOR];
 	}
 	// @ts-ignore
 	return item;

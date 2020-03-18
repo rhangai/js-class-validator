@@ -1,8 +1,8 @@
 export type Class<T> = { new (...args: any[]): T };
 export type Prototype<T> = T & { constructor: Class<T> };
 
-export const SYMBOL_VALIDATOR_DECORATOR = Symbol('validator-decorator');
-export const SYMBOL_VALIDATOR_INPUT_TYPE = Symbol('validator-input-type');
+export const VALIDATOR_SYMBOL_DECORATOR = Symbol('validator-decorator');
+export const VALIDATOR_SYMBOL_INPUT = Symbol('validator-input-type');
 
 // prettier-ignore
 type DeepReadonly<T> = 
@@ -18,7 +18,7 @@ type DeepReadonlyObject<T> = {
 export type Validated<T> = DeepReadonlyObject<T>;
 
 interface ValidateInputObjectConversible<InputType> {
-	[SYMBOL_VALIDATOR_INPUT_TYPE]: InputType;
+	[VALIDATOR_SYMBOL_INPUT]: InputType;
 }
 
 // prettier-ignore
