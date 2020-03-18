@@ -9,7 +9,7 @@ yarn add @rhangai/class-validator
 Use it
 
 ```ts
-import { Validate, Trim } from '@rhangai/class-validator';
+import { Validate, validade, Trim } from '@rhangai/class-validator';
 
 @Trim()
 export class UserDto {
@@ -18,14 +18,8 @@ export class UserDto {
 	@Validate()
 	address!: string;
 }
-```
-
-Validate your object
-
-```ts
-import { validate } from '@rhangai/class-validator';
 const obj = {
-	name: '   my nam',
+	name: '   john doe',
 };
 const user = await validate(UserDto, obj);
 ```

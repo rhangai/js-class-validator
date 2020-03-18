@@ -5,6 +5,11 @@
   "main": "lib/index.js",
   "repository": "git@github.com:rhangai/node-class-validator.git",
   "author": "rhangai <hangai.renan@gmail.com>",
+  "keywords": [
+    "validator",
+    "decorator",
+    "sanitizer"
+  ],
   "license": "MIT",
   "dependencies": {
     "fecha": "^4.2.0",

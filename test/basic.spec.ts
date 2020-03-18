@@ -90,4 +90,25 @@ describe('validator', () => {
 		expect(validated).toHaveProperty('name', 'rhangai');
 		expect(validated).toHaveProperty('job', 'programmer');
 	});
+
+	it('should validate options', async () => {
+		class TestDto {
+			@Validate()
+			name!: string;
+
+			@Validate()
+			job!: string;
+		}
+
+		const dto = {
+			name: '    rhangai     ',
+			job: '    programmer     ',
+		};
+		const validated = await validate(TestDto, dto, {
+			postValidators: Validate({ transform: v => v.trim() }),
+		});
+		expect(validated).toBeInstanceOf(TestDto);
+		expect(validated).toHaveProperty('name', 'rhangai');
+		expect(validated).toHaveProperty('job', 'programmer');
+	});
 });

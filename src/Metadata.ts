@@ -1,4 +1,4 @@
-import { ClassValidator, Validator } from './ClassValidator';
+import { ClassValidator, Validator, ClassValidatorValidateOptions } from './ClassValidator';
 import { Prototype, Class } from './Util';
 import { ValidateError } from './Error';
 
@@ -74,10 +74,10 @@ class ValidatorMetadata {
 	}
 
 	/// Apply the validation using the metadata
-	async validate<T>(classType: Class<T>, obj: any): Promise<T> {
+	async validate<T>(classType: Class<T>, obj: any, options: ClassValidatorValidateOptions = {}): Promise<T> {
 		const classValidator = this.storage.get(classType);
 		if (!classValidator) throw new ValidateError(`No metadata found for class ${classType.name}`, []);
-		return await classValidator.validate(obj);
+		return await classValidator.validate(obj, options);
 	}
 }
 

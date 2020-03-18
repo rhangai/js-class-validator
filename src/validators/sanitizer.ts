@@ -3,10 +3,15 @@ import { Validate } from '../Decorators';
 import validator from 'validator';
 import { parse } from 'fecha';
 
+/// Trim the given characters
 export const Trim = (chars?: string) =>
 	Validate({ transform: v => (typeof v !== 'string' ? v : validator.trim(v, chars)) });
+
+/// Normalize email
 export const NormalizeEmail = (options: unknown) => Validate({ transform: v => validator.normalizeEmail(v, options) });
+/// Blacklist characters
 export const Blacklist = (chars: string) => Validate({ transform: v => validator.blacklist(v, chars) });
+/// Whitelist characters
 export const Whitelist = (chars: string) => Validate({ transform: v => validator.whitelist(v, chars) });
 
 /**

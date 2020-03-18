@@ -39,6 +39,13 @@ type ValidatorEntryState<Value> = {
 type ValidatorEntryApplyOptions<Value> = {
 	context: ValidatorContext<Value>;
 	entry: ValidatorEntry | undefined;
+	preValidators?: Validator[];
+	postValidators?: Validator[];
+};
+
+export type ClassValidatorValidateOptions = {
+	preValidators?: Validator[];
+	postValidators?: Validator[];
 };
 
 export class ClassValidator<T extends Record<string, any> = any> {
@@ -80,7 +87,7 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	 * Applies the validations
 	 * @param obj
 	 */
-	async validate(obj: T): Promise<T> {
+	async validate(obj: T, options: ClassValidatorValidateOptions): Promise<T> {
 		const errors: ValidateErrorItem[] = [];
 		const output: any = {};
 		if (typeof obj !== 'object' || obj == null) {
@@ -92,6 +99,8 @@ export class ClassValidator<T extends Record<string, any> = any> {
 			try {
 				const value = await this.validateEntry({
 					entry,
+					preValidators: options.preValidators,
+					postValidators: options.postValidators,
 					context: {
 						object: obj,
 						originalValue,
@@ -122,11 +131,17 @@ export class ClassValidator<T extends Record<string, any> = any> {
 			value: options.context.originalValue,
 			skip: false,
 		};
+		if (options.preValidators && options.preValidators.length > 0) {
+			await ClassValidator.validateState(state, options.preValidators, options.context);
+		}
 		if (!options.entry || !options.entry.skipClassValidator) {
 			await ClassValidator.validateState(state, this.classValidators, options.context);
 		}
 		if (options.entry) {
 			await ClassValidator.validateState(state, options.entry.validators, options.context);
+		}
+		if (options.postValidators && options.postValidators.length > 0) {
+			await ClassValidator.validateState(state, options.postValidators, options.context);
 		}
 		return state.value;
 	}
