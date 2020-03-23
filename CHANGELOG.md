@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/rhangai/node-class-validator/compare/v0.0.13...v0.0.14) (2020-03-23)
+
+
+### Bug Fixes
+
+* Date types on ValidateInput and Readonly ([3af280f](https://github.com/rhangai/node-class-validator/commit/3af280fde54c75a2bdea52cc901d5c7a47aedced))
+
 ### [0.0.13](https://github.com/rhangai/node-class-validator/compare/v0.0.12...v0.0.13) (2020-03-18)
 
 ### [0.0.12](https://github.com/rhangai/node-class-validator/compare/v0.0.11...v0.0.12) (2020-03-18)
