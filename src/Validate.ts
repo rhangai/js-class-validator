@@ -3,7 +3,8 @@ import { Class, Validated } from './Util';
 import { ValidatorItem, normalizeValidatorArray } from './Decorators';
 import { ClassValidator } from './ClassValidator';
 
-export type ValidateOptions = {
+export type ValidateOptions<T> = {
+	skip?: Array<keyof T>;
 	preValidators?: ValidatorItem | ValidatorItem[];
 	postValidators?: ValidatorItem | ValidatorItem[];
 };
@@ -16,9 +17,10 @@ export type ValidateOptions = {
 export function validate<T extends {}>(
 	classType: Class<T>,
 	objOrInstance: Record<string, any>,
-	options: ValidateOptions = {}
+	options: ValidateOptions<T> = {}
 ): Promise<Validated<T>> {
 	return validatorMetadata.validate(classType, objOrInstance, {
+		skip: options.skip,
 		preValidators: normalizeValidatorArray(options.preValidators),
 		postValidators: normalizeValidatorArray(options.postValidators),
 	}) as any;

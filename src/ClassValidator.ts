@@ -43,7 +43,8 @@ type ValidatorEntryApplyOptions<Value> = {
 	postValidators?: Validator[];
 };
 
-export type ClassValidatorValidateOptions = {
+export type ClassValidatorValidateOptions<T> = {
+	skip?: Array<keyof T>;
 	preValidators?: Validator[];
 	postValidators?: Validator[];
 };
@@ -87,13 +88,14 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	 * Applies the validations
 	 * @param obj
 	 */
-	async validate(obj: T, options: ClassValidatorValidateOptions): Promise<T> {
+	async validate(obj: T, options: ClassValidatorValidateOptions<T>): Promise<T> {
 		const errors: ValidateErrorItem[] = [];
 		const output: any = {};
 		if (typeof obj !== 'object' || obj == null) {
 			throw new Error(`obj must be an object`);
 		}
 		for (const key in this.validators) {
+			if (options.skip && options.skip.indexOf(key) >= 0) continue;
 			const entry: ValidatorEntry | undefined = this.validators[key];
 			const originalValue = obj[key];
 			try {

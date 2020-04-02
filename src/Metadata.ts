@@ -74,7 +74,7 @@ class ValidatorMetadata {
 	}
 
 	/// Apply the validation using the metadata
-	async validate<T>(classType: Class<T>, obj: any, options: ClassValidatorValidateOptions = {}): Promise<T> {
+	async validate<T>(classType: Class<T>, obj: any, options: ClassValidatorValidateOptions<T> = {}): Promise<T> {
 		const classValidator = this.storage.get(classType);
 		if (!classValidator) throw new ValidateError(`No metadata found for class ${classType.name}`, []);
 		return await classValidator.validate(obj, options);

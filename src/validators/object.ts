@@ -3,12 +3,16 @@ import { validatorMetadata } from '../Metadata';
 import { VALIDATOR_SYMBOL_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
 import { ValidateError, ValidateErrorItem } from '../Error';
+import { ClassValidatorValidateOptions } from '../ClassValidator';
 
 /**
  * Validates an object
  * @param cb If provided, the callback
  */
-export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>) {
+export function IsObject<T = any>(
+	cb?: (obj: T) => false | null | Class<T>,
+	validateOptions: ClassValidatorValidateOptions<T> = {}
+) {
 	return Validate({
 		transform: (value, context) => {
 			if (cb == null) {
@@ -20,7 +24,7 @@ export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>) {
 			const classType = cb(context.object);
 			if (classType === false) throw context.createError();
 			if (classType == null) return undefined;
-			return validatorMetadata.validate(classType, value);
+			return validatorMetadata.validate(classType, value, validateOptions);
 		},
 	});
 }
