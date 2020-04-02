@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/rhangai/node-class-validator/compare/v0.0.14...v0.0.15) (2020-04-02)
+
+
+### Features
+
+* Added skip options on validate method and IsObject ([e628a09](https://github.com/rhangai/node-class-validator/commit/e628a091969cbaf9d149ec42c5428fce340d3f1c))
+
 ### [0.0.14](https://github.com/rhangai/node-class-validator/compare/v0.0.13...v0.0.14) (2020-03-23)
 
 
