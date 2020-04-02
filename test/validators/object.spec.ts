@@ -53,10 +53,12 @@ describe('Objects', () => {
 				type!: 'admin' | 'user';
 				@IsObject(obj => (obj.type === 'admin' ? AdminData : UserData))
 				data!: UserData | AdminData;
+				@Validate({ test: () => false })
+				tooHardToValidate!: any;
 			}
 
 			await testValidator({
-				validator: IsObject(_ => User),
+				validator: IsObject(_ => User, { skip: ['tooHardToValidate'] }),
 				invalids: [
 					// Invalid objects
 					{ type: 'user', data: { adminField: '   john' } },

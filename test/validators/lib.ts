@@ -9,6 +9,7 @@ type TestValidatorSpecTransform = {
 
 type TestValidatorSpec = {
 	validator: any;
+	validatorOptions?: any;
 	valids?: any[];
 	invalids?: any[];
 	transforms?: TestValidatorSpecTransform[];
