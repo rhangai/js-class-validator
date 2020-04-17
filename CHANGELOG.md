@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/rhangai/node-class-validator/compare/v0.0.15...v0.0.16) (2020-04-17)
+
+
+### Features
+
+* Added inheritance validation for Dtos ([3707177](https://github.com/rhangai/node-class-validator/commit/37071779b4a5bceb38b920ad7dab0044cfcc1df3))
+
 ### [0.0.15](https://github.com/rhangai/node-class-validator/compare/v0.0.14...v0.0.15) (2020-04-02)
 
 
