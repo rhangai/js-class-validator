@@ -9,17 +9,24 @@ yarn add @rhangai/class-validator
 Use it
 
 ```ts
-import { Validate, validade, Trim } from '@rhangai/class-validator';
+import { Validate, validade, Trim, IsString, IsInt, ToInt } from '@rhangai/class-validator';
 
 @Trim()
 export class UserDto {
-	@Validate()
+	@IsString()
 	name!: string;
-	@Validate()
+	@IsString()
 	address!: string;
+	@IsInt()
+	intValue!: number;
+	@ToInt()
+	maybeIntValue!: number;
 }
 const obj = {
 	name: '   john doe',
+	address: 'my home address',
+	intValue: 1000,
+	maybeIntValue: '123', // or 123
 };
 const user = await validate(UserDto, obj);
 ```
@@ -69,7 +76,7 @@ interface Validator {
 }
 
 const IsPassword = Validate({
-	test: input => {
+	test: (input) => {
 		return typeof input === 'string' && input.length >= 6;
 	},
 });
