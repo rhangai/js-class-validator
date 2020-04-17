@@ -23,7 +23,7 @@ describe('Objects', () => {
 			}
 
 			await testValidator({
-				validator: IsObject(_ => TestClass),
+				validator: IsObject(() => TestClass),
 				transforms: [
 					{
 						value: { name: '   john' },
@@ -51,14 +51,14 @@ describe('Objects', () => {
 				@Validate()
 				@IsString()
 				type!: 'admin' | 'user';
-				@IsObject(obj => (obj.type === 'admin' ? AdminData : UserData))
+				@IsObject((obj) => (obj.type === 'admin' ? AdminData : UserData))
 				data!: UserData | AdminData;
 				@Validate({ test: () => false })
 				tooHardToValidate!: any;
 			}
 
 			await testValidator({
-				validator: IsObject(_ => User, { skip: ['tooHardToValidate'] }),
+				validator: IsObject(() => User, { skip: ['tooHardToValidate'] }),
 				invalids: [
 					// Invalid objects
 					{ type: 'user', data: { adminField: '   john' } },
@@ -78,6 +78,37 @@ describe('Objects', () => {
 					{
 						value: { type: 'user', data: { userField: '   john' } },
 						expected: { type: 'user', data: { userField: 'john' } },
+						matchObject: true,
+					},
+				],
+			});
+		});
+
+		it('child classes', async () => {
+			class BaseData {
+				@Trim()
+				@IsString()
+				baseField!: string;
+			}
+
+			class ChildData extends BaseData {
+				@Trim()
+				@IsString()
+				childField!: string;
+			}
+
+			await testValidator({
+				validator: IsObject(() => ChildData),
+				invalids: [
+					{
+						baseField: {},
+						childField: {},
+					},
+				],
+				transforms: [
+					{
+						value: { baseField: '   base    ', childField: '    child          ' },
+						expected: { baseField: 'base', childField: 'child' },
 						matchObject: true,
 					},
 				],
@@ -116,7 +147,7 @@ describe('Objects', () => {
 			}
 
 			await testValidator({
-				validator: IsObject(_ => TestClass),
+				validator: IsObject(() => TestClass),
 				valids: [{ age: '10' }, { age: '20' }, { age: '30' }],
 				invalids: [null, '', 'string', 10, undefined, [1, 2, 3], { notAge: 'john' }, { age: 'john' }],
 			});

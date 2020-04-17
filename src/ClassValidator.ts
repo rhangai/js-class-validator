@@ -43,18 +43,36 @@ type ValidatorEntryApplyOptions<Value> = {
 	postValidators?: Validator[];
 };
 
+type ValidatorState = {
+	input: any;
+	output: any;
+	errors: ValidateErrorItem[];
+};
+
 export type ClassValidatorValidateOptions<T> = {
 	skip?: Array<keyof T>;
 	preValidators?: Validator[];
 	postValidators?: Validator[];
 };
 
+/**
+ * The class validator
+ */
 export class ClassValidator<T extends Record<string, any> = any> {
 	private validators: Partial<Record<keyof T, ValidatorEntry>> = {};
 	private classValidators: Validator[] = [];
 
-	constructor(private readonly classType: Class<T>) {}
+	// Construct the class
+	constructor(
+		private readonly classType: Class<T>,
+		private readonly parentValidatorGetter: (() => ClassValidator<any> | null | undefined) | null = null
+	) {}
 
+	/**
+	 * Add a new entry validator
+	 * @param key
+	 * @param validator
+	 */
 	add<Key extends keyof T>(key: Key, validator?: Validator) {
 		const entry = this.getEntry(key);
 		if (validator) entry.validators.unshift(validator);
@@ -69,7 +87,7 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	}
 
 	/**
-	 *
+	 * Get the entry
 	 * @param key
 	 */
 	private getEntry<Key extends keyof T>(key: Key) {
@@ -89,22 +107,43 @@ export class ClassValidator<T extends Record<string, any> = any> {
 	 * @param obj
 	 */
 	async validate(obj: T, options: ClassValidatorValidateOptions<T>): Promise<T> {
-		const errors: ValidateErrorItem[] = [];
-		const output: any = {};
 		if (typeof obj !== 'object' || obj == null) {
 			throw new Error(`obj must be an object`);
 		}
+		const state: ValidatorState = {
+			errors: [],
+			input: obj,
+			output: {},
+		};
+		await this.validateState(state, options);
+		const parentValidator = this.parentValidatorGetter?.();
+		if (parentValidator) {
+			const skip = Object.keys(state.output);
+			await parentValidator.validateState(state, {
+				...options,
+				skip: options.skip ? [...options.skip, ...skip] : skip,
+			});
+		}
+		if (state.errors.length > 0) throw new ValidateError(`Error validating ${this.classType.name}`, state.errors);
+		Object.setPrototypeOf(state.output, this.classType.prototype);
+		return Object.freeze(state.output);
+	}
+
+	/**
+	 * Applies the validations on a raw object state
+	 */
+	private async validateState(state: ValidatorState, options: ClassValidatorValidateOptions<T>): Promise<void> {
 		for (const key in this.validators) {
 			if (options.skip && options.skip.indexOf(key) >= 0) continue;
 			const entry: ValidatorEntry | undefined = this.validators[key];
-			const originalValue = obj[key];
+			const originalValue = state.input[key];
 			try {
 				const value = await this.validateEntry({
 					entry,
 					preValidators: options.preValidators,
 					postValidators: options.postValidators,
 					context: {
-						object: obj,
+						object: state.input,
 						originalValue,
 						key,
 						createError(message?: string) {
@@ -113,15 +152,12 @@ export class ClassValidator<T extends Record<string, any> = any> {
 					},
 				});
 				if (typeof value !== 'undefined') {
-					output[key] = value;
+					state.output[key] = value;
 				}
 			} catch (error) {
-				errors.push({ key, error, value: originalValue });
+				state.errors.push({ key, error, value: originalValue });
 			}
 		}
-		if (errors.length > 0) throw new ValidateError(`Error validating ${this.classType.name}`, errors);
-		Object.setPrototypeOf(output, this.classType.prototype);
-		return Object.freeze(output);
 	}
 
 	/**

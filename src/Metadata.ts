@@ -63,14 +63,22 @@ class ValidatorMetadata {
 
 	/// Add a validator to the prop
 	add<T = any>(target: Class<T>, key: string, validator?: Validator) {
-		const classValidator = this.storage.assert(target, () => new ClassValidator(target));
+		const classValidator = this.getClassValidator(target);
 		classValidator.add(key, validator);
 	}
 
 	/// Add a class validator to the target
 	addClassValidator<T = any>(target: Class<T>, validator?: Validator) {
-		const classValidator = this.storage.assert(target, () => new ClassValidator(target));
+		const classValidator = this.getClassValidator(target);
 		classValidator.addClassValidator(validator);
+	}
+
+	// Get the class validator for the class
+	private getClassValidator<T = any>(target: Class<T>) {
+		return this.storage.assert(
+			target,
+			() => new ClassValidator(target, () => this.storage.get(Object.getPrototypeOf(target)))
+		);
 	}
 
 	/// Apply the validation using the metadata
