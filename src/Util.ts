@@ -33,7 +33,7 @@ type ValidateInputValue<T> =
 
 // prettier-ignore
 type ValidateInputObject<T> = {
-	[K in keyof T]?: ValidateInputValue<T[K]>;
+	[K in keyof T]?: ValidateInputValue<T[K]> | DeepReadonly<ValidateInputValue<T[K]>>;
 };
 
 export type ValidateInput<T> = ValidateInputObject<T>;
