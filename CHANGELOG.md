@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/rhangai/node-class-validator/compare/v0.2.0...v0.2.1) (2020-08-27)
+
+
+### Bug Fixes
+
+* Nested validation in objects were not using the options properly ([ed1a54c](https://github.com/rhangai/node-class-validator/commit/ed1a54cf4e30cbf2ea20bfed57ca9c7376c5ae28))
+
 ## [0.2.0](https://github.com/rhangai/node-class-validator/compare/v0.1.1...v0.2.0) (2020-04-19)
 
 ### [0.1.1](https://github.com/rhangai/node-class-validator/compare/v0.1.0...v0.1.1) (2020-04-17)
