@@ -4,15 +4,13 @@ import { VALIDATOR_SYMBOL_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
 import { ValidateError, ValidateErrorItem } from '../Error';
 import { ClassValidatorValidateOptions } from '../ClassValidator';
+import { ValidateOptions } from '../../lib/Validate';
 
 /**
  * Validates an object
  * @param cb If provided, the callback
  */
-export function IsObject<T = any>(
-	cb?: (obj: T) => false | null | Class<T>,
-	validateOptions: ClassValidatorValidateOptions<T> = {}
-) {
+export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>, validateOptions: ValidateOptions<T> = {}) {
 	return Validate({
 		transform: (value, context) => {
 			if (cb == null) {
@@ -24,7 +22,11 @@ export function IsObject<T = any>(
 			const classType = cb(context.object);
 			if (classType === false) throw context.createError();
 			if (classType == null) return undefined;
-			return validatorMetadata.validate(classType, value, validateOptions);
+			return validatorMetadata.validate(classType, value, {
+				skip: validateOptions.skip,
+				preValidators: normalizeValidatorArray(validateOptions.preValidators),
+				postValidators: normalizeValidatorArray(validateOptions.postValidators),
+			});
 		},
 	});
 }
