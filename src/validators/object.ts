@@ -4,7 +4,7 @@ import { VALIDATOR_SYMBOL_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
 import { ValidateError, ValidateErrorItem } from '../Error';
 import { ClassValidatorValidateOptions } from '../ClassValidator';
-import { ValidateOptions } from '../../lib/Validate';
+import { ValidateOptions } from '../Validate';
 
 /**
  * Validates an object
