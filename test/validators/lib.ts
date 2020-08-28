@@ -13,6 +13,7 @@ type TestValidatorSpec = {
 	validator: any;
 	valids?: any[];
 	invalids?: any[];
+	validatorOptions?: { data?: Record<string, unknown> };
 	transforms?: TestValidatorSpecTransform[];
 };
 
@@ -21,26 +22,28 @@ export async function testValidator(spec: TestValidatorSpec) {
 	// Test for valid values
 	const specValids = spec.valids ?? [];
 	for (const validValue of specValids) {
-		await validateValue(validValue, validator);
+		await validateValue(validValue, validator, spec.validatorOptions);
 	}
 
 	// Test for invalid values
 	const specInvalids = spec.invalids ?? [];
 	for (const invalidValue of specInvalids) {
-		await expect(validateValue(invalidValue, validator)).rejects.toBeInstanceOf(Error);
+		await expect(validateValue(invalidValue, validator, spec.validatorOptions)).rejects.toBeInstanceOf(Error);
 	}
 
 	// Must pass transformations
 	const specTransforms = spec.transforms ?? [];
 	for (const specTransform of specTransforms) {
+		const validatorOptions = {
+			...spec.validatorOptions,
+			...specTransform.validatorOptions,
+		};
 		if (specTransform.invalid) {
-			await expect(
-				validateValue(specTransform.value, validator, specTransform.validatorOptions)
-			).rejects.toBeInstanceOf(Error);
+			await expect(validateValue(specTransform.value, validator, validatorOptions)).rejects.toBeInstanceOf(Error);
 			continue;
 		}
 
-		const validated = await validateValue(specTransform.value, validator, specTransform.validatorOptions);
+		const validated = await validateValue(specTransform.value, validator, validatorOptions);
 
 		if (specTransform.test) {
 			await specTransform.test(validated, specTransform);
