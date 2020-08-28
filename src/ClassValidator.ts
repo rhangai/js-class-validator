@@ -2,6 +2,7 @@ import { Class } from './Util';
 import { ValidateError, ValidatePropError, ValidateErrorItem } from './Error';
 
 export type ValidatorContext<Value = any> = {
+	data: Record<string, unknown>;
 	object: any;
 	originalValue: Value;
 	key: string | null;
@@ -10,13 +11,13 @@ export type ValidatorContext<Value = any> = {
 
 export type Validator = {
 	/// Test whether this property is valid or not
-	test?: (value: any, context: ValidatorContext) => boolean | Promise<boolean>;
+	test?: (value: any, context: Readonly<ValidatorContext>) => boolean | Promise<boolean>;
 	/// Message when there is an error
 	message?: string;
 	/// If skips returns true, the validation will be skipped
-	skip?: (value: any, context: ValidatorContext) => ValidatorSkipResult | Promise<ValidatorSkipResult>;
+	skip?: (value: any, context: Readonly<ValidatorContext>) => ValidatorSkipResult | Promise<ValidatorSkipResult>;
 	/// Transform the property
-	transform?: (value: any, context: ValidatorContext) => unknown | Promise<unknown>;
+	transform?: (value: any, context: Readonly<ValidatorContext>) => unknown | Promise<unknown>;
 };
 
 export type ValidatorSkipResult =
@@ -50,6 +51,7 @@ type ValidatorState = {
 };
 
 export type ClassValidatorValidateOptions<T> = {
+	data?: Record<string, unknown>;
 	skip?: Array<keyof T>;
 	preValidators?: Validator[];
 	postValidators?: Validator[];
@@ -143,6 +145,7 @@ export class ClassValidator<T extends Record<string, any> = any> {
 					preValidators: options.preValidators,
 					postValidators: options.postValidators,
 					context: {
+						data: { ...options.data },
 						object: state.input,
 						originalValue,
 						key,
@@ -190,13 +193,15 @@ export class ClassValidator<T extends Record<string, any> = any> {
 		obj: any,
 		key: string | null,
 		value: Value,
-		validators: Array<Validator | undefined>
+		validators: Array<Validator | undefined>,
+		data: Record<string, unknown>
 	) {
 		const state: ValidatorEntryState<Value> = {
 			value,
 			skip: false,
 		};
 		await ClassValidator.validateState(state, validators, {
+			data,
 			object: obj,
 			originalValue: value,
 			key,

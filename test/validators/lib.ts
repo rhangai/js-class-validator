@@ -4,12 +4,13 @@ type TestValidatorSpecTransform = {
 	value: any;
 	expected?: any;
 	matchObject?: boolean;
+	invalid?: boolean;
+	validatorOptions?: { data?: Record<string, unknown> };
 	test?: (value: any, spec: TestValidatorSpecTransform) => void | Promise<void>;
 };
 
 type TestValidatorSpec = {
 	validator: any;
-	validatorOptions?: any;
 	valids?: any[];
 	invalids?: any[];
 	transforms?: TestValidatorSpecTransform[];
@@ -32,7 +33,14 @@ export async function testValidator(spec: TestValidatorSpec) {
 	// Must pass transformations
 	const specTransforms = spec.transforms ?? [];
 	for (const specTransform of specTransforms) {
-		const validated = await validateValue(specTransform.value, validator);
+		if (specTransform.invalid) {
+			await expect(
+				validateValue(specTransform.value, validator, specTransform.validatorOptions)
+			).rejects.toBeInstanceOf(Error);
+			continue;
+		}
+
+		const validated = await validateValue(specTransform.value, validator, specTransform.validatorOptions);
 
 		if (specTransform.test) {
 			await specTransform.test(validated, specTransform);

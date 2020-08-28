@@ -4,6 +4,7 @@ import { ValidatorItem, normalizeValidatorArray } from './Decorators';
 import { ClassValidator } from './ClassValidator';
 
 export type ValidateOptions<T> = {
+	data?: Record<string, unknown>;
 	skip?: Array<keyof T>;
 	preValidators?: ValidatorItem | ValidatorItem[];
 	postValidators?: ValidatorItem | ValidatorItem[];
@@ -20,6 +21,7 @@ export function validate<T extends {}>(
 	options: ValidateOptions<T> = {}
 ): Promise<Validated<T>> {
 	return validatorMetadata.validate(classType, objOrInstance, {
+		data: options.data,
 		skip: options.skip,
 		preValidators: normalizeValidatorArray(options.preValidators),
 		postValidators: normalizeValidatorArray(options.postValidators),
@@ -33,8 +35,9 @@ export function validate<T extends {}>(
  */
 export async function validateValue<T = any>(
 	value: any,
-	validator?: ValidatorItem | ValidatorItem[]
+	validator?: ValidatorItem | ValidatorItem[],
+	options: Pick<ValidateOptions<T>, 'data'> = {}
 ): Promise<Validated<T>> {
 	const normalizedValidators = normalizeValidatorArray(validator);
-	return ClassValidator.validateItem(value, null, value, normalizedValidators);
+	return ClassValidator.validateItem(value, null, value, normalizedValidators, options.data ?? {});
 }

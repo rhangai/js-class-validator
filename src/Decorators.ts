@@ -15,7 +15,7 @@ export type ValidatorItem = ValidateDecorator | Validator;
  */
 export function Validate<T = any>(validator?: ValidatorItem | ValidatorItem[]): ValidateDecorator<T> {
 	const validatorNormalized = normalizeValidator(validator);
-	const decorator: ValidateDecorator<T> = function(prototypeOrClass: Prototype<T> | Class<T>, name?: string) {
+	const decorator: ValidateDecorator<T> = function (prototypeOrClass: Prototype<T> | Class<T>, name?: string) {
 		if (isClassValidator(prototypeOrClass, name)) {
 			validatorMetadata.addClassValidator(prototypeOrClass, validatorNormalized);
 		} else {
@@ -36,7 +36,7 @@ export function normalizeValidator<T = any>(validator?: ValidatorItem | Validato
 		const validatorArray = validator.map(extractValidator).filter(Boolean);
 		return {
 			transform: (value, context) => {
-				return ClassValidator.validateItem(context.object, context.key, value, validatorArray);
+				return ClassValidator.validateItem(context.object, context.key, value, validatorArray, context.data);
 			},
 		};
 	}

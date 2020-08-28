@@ -1,7 +1,7 @@
-import { Trim } from '../../src/validators/sanitizer';
+import { Trim, ToInt } from '../../src/validators/sanitizer';
 import { testValidator } from './lib';
 import { IsObject, IsArray, IsArrayOf } from '../../src/validators/object';
-import { Validate } from '../../src';
+import { Validate, IsOptional } from '../../src';
 import { IsString, IsNumeric } from '../../src/validators/validator';
 
 describe('Objects', () => {
@@ -13,6 +13,44 @@ describe('Objects', () => {
 				validator: IsObject(),
 				valids: [{}, [], new TestClass()],
 				invalids: [null, '', 'string', 10, undefined],
+			});
+		});
+
+		it('data', async () => {
+			class TestClass {
+				@Trim()
+				name!: string;
+
+				@ToInt()
+				age!: number;
+			}
+
+			await testValidator({
+				validator: IsObject(
+					() => TestClass,
+					(_v, { data }) => ({
+						preValidators: data.isOptional ? IsOptional() : [],
+					})
+				),
+				transforms: [
+					{
+						value: { name: '   john', age: 100 },
+						expected: { name: 'john', age: 100 },
+						matchObject: true,
+					},
+					{
+						value: { name: '   john', age: null },
+						expected: { name: 'john' },
+						matchObject: true,
+						validatorOptions: {
+							data: { isOptional: true },
+						},
+					},
+					{
+						value: { name: '   john', age: null },
+						invalid: true,
+					},
+				],
 			});
 		});
 

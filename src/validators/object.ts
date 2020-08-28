@@ -3,14 +3,19 @@ import { validatorMetadata } from '../Metadata';
 import { VALIDATOR_SYMBOL_DECORATOR, Class } from '../Util';
 import { Validator, ClassValidator } from '../ClassValidator';
 import { ValidateError, ValidateErrorItem } from '../Error';
-import { ClassValidatorValidateOptions } from '../ClassValidator';
+import { ValidatorContext } from '../ClassValidator';
 import { ValidateOptions } from '../Validate';
+
+type ValueOrValidateCallback<Options, T = unknown> = Options | ((obj: T, context: ValidatorContext<T>) => Options);
 
 /**
  * Validates an object
  * @param cb If provided, the callback
  */
-export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>, validateOptions: ValidateOptions<T> = {}) {
+export function IsObject<T = any>(
+	cb?: (obj: T) => false | null | Class<T>,
+	validateOptions: ValueOrValidateCallback<ValidateOptions<T>> = {}
+) {
 	return Validate({
 		transform: (value, context) => {
 			if (cb == null) {
@@ -19,13 +24,20 @@ export function IsObject<T = any>(cb?: (obj: T) => false | null | Class<T>, vali
 				}
 				return value;
 			}
+
+			let transformValidateOptions = validateOptions;
+			if (typeof transformValidateOptions === 'function') {
+				transformValidateOptions = transformValidateOptions(context.object, context);
+			}
+
 			const classType = cb(context.object);
 			if (classType === false) throw context.createError();
 			if (classType == null) return undefined;
 			return validatorMetadata.validate(classType, value, {
-				skip: validateOptions.skip,
-				preValidators: normalizeValidatorArray(validateOptions.preValidators),
-				postValidators: normalizeValidatorArray(validateOptions.postValidators),
+				data: { ...context.data, ...transformValidateOptions.data },
+				skip: transformValidateOptions.skip,
+				preValidators: normalizeValidatorArray(transformValidateOptions.preValidators),
+				postValidators: normalizeValidatorArray(transformValidateOptions.postValidators),
 			});
 		},
 	});
@@ -44,7 +56,13 @@ export function IsArray<T = any>(validators?: Array<ValidateDecorator | Validato
 			for (let i = 0; i < value.length; ++i) {
 				const originalValue = value[i];
 				try {
-					result[i] = await ClassValidator.validateItem(value, `${i}`, value[i], arrayValidator);
+					result[i] = await ClassValidator.validateItem(
+						value,
+						`${i}`,
+						value[i],
+						arrayValidator,
+						context.data
+					);
 				} catch (error) {
 					errors.push({ key: `${i}`, error, value: originalValue });
 				}
