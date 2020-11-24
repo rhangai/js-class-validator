@@ -2,8 +2,28 @@ import { ClassValidator, ValidatorContext } from '../ClassValidator';
 import { normalizeValidatorArray, Validate, ValidatorItem } from '../Decorators';
 import { ValidateError, ValidateErrorItem } from '../Error';
 
-/// Validate against
-export const IsOptional = () => Validate({ skip: (v) => v == null });
+type ValidatorIsOptionalOption = {
+	/**
+	 * If the string is empty, mark it as null and skip validation.
+	 */
+	emptyStringAsNull?: boolean;
+};
+/**
+ * Mark the field as optional, skipping the validation if it is null
+ */
+export function IsOptional(options?: ValidatorIsOptionalOption) {
+	return Validate({
+		skip(v) {
+			if (v == null) {
+				return { skip: true, value: null };
+			}
+			if (options?.emptyStringAsNull && v === '') {
+				return { skip: true, value: null };
+			}
+			return false;
+		},
+	});
+}
 
 /// Optional only if a certain criteria is met
 export function IsOptionalIf<T = unknown>(checkIsOptional: (obj: T, context: ValidatorContext<T>) => boolean) {
