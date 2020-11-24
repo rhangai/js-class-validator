@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.5](https://github.com/rhangai/node-class-validator/compare/v0.2.4...v0.2.5) (2020-11-24)
+
+
+### Features
+
+* Added argument for is optional to allow empty strings ([5c9c5b7](https://github.com/rhangai/node-class-validator/commit/5c9c5b76044c452530b6b30f0970a00376dba455))
+
 ### [0.2.4](https://github.com/rhangai/node-class-validator/compare/v0.2.3...v0.2.4) (2020-08-28)
 
 ### [0.2.3](https://github.com/rhangai/node-class-validator/compare/v0.2.2...v0.2.3) (2020-08-28)
