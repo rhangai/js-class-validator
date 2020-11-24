@@ -1,5 +1,5 @@
 import { validatorMetadata } from './Metadata';
-import { Class, Validated } from './Util';
+import { Class, Validated, ValidateInput } from './Util';
 import { ValidatorItem, normalizeValidatorArray } from './Decorators';
 import { ClassValidator } from './ClassValidator';
 
@@ -17,7 +17,7 @@ export type ValidateOptions<T> = {
  */
 export function validate<T extends {}>(
 	classType: Class<T>,
-	objOrInstance: Record<string, any>,
+	objOrInstance: ValidateInput<T> | T,
 	options: ValidateOptions<T> = {}
 ): Promise<Validated<T>> {
 	return validatorMetadata.validate(classType, objOrInstance, {
