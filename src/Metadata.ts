@@ -47,7 +47,7 @@ class ValidatorMetadataStorage<T> {
 			return prop;
 		}
 		const target = prop;
-		let key: symbol = Reflect.getMetadata(this.storageKey, target);
+		let key: symbol = Reflect.getOwnMetadata(this.storageKey, target);
 		if (!key && create) {
 			key = Symbol();
 			Reflect.defineMetadata(this.storageKey, key, target);
