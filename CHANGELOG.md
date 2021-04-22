@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/rhangai/node-class-validator/compare/v0.3.0...v0.3.1) (2021-04-22)
+
+
+### Bug Fixes
+
+* Metadata of inherited classes ([2c83331](https://github.com/rhangai/node-class-validator/commit/2c83331254ad98a7714af5aafee7d04bf86d4635))
+
 ## [0.3.0](https://github.com/rhangai/node-class-validator/compare/v0.2.5...v0.3.0) (2020-11-24)
 
 ### [0.2.5](https://github.com/rhangai/node-class-validator/compare/v0.2.4...v0.2.5) (2020-11-24)
